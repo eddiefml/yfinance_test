@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YFinance Multi Stock Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>YFinance Multi Stock Dashboard</h1>
+      <p class="hint">
+        Enter multiple symbols separated by commas or new lines (e.g. AAPL, MSFT, TSLA, NVDA).
+      </p>
+      <p class="delay-note">
+        {{ price_delay_note }}
+      </p>
+
+      <form method="post" class="query-form">
+        <label for="symbols">Ticker Symbols</label>
+        <textarea id="symbols" name="symbols" rows="3" placeholder="AAPL, MSFT, TSLA, 0700.HK">{{ symbols_input }}</textarea>
+        <button type="submit">Get Data</button>
+      </form>
+
+      {% if errors %}
+      <section class="panel error-panel">
+        <h2>Errors</h2>
+        <ul>
+          {% for err in errors %}
+          <li><strong>{{ err.symbol }}</strong>: {{ err.message }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+
+      {% if results %}
+      <section class="panel">
+        <div class="table-meta">
+          <h2>Stock Snapshot</h2>
+          <span>Updated: {{ updated_at }}</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Last</th>
+                <th>Change</th>
+                <th>Change %</th>
+                <th>Previous Close</th>
+                <th>Open</th>
+                <th>Day Range</th>
+                <th>52W Range</th>
+                <th>52W Position</th>
+                <th>Volume</th>
+                <th>Market Cap</th>
+                <th>Currency</th>
+                <th>Exchange</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in results %}
+              <tr>
+                <td>{{ row.symbol }}</td>
+                <td>{{ row.last_price }}</td>
+                <td>{{ row.change }}</td>
+                <td>{{ row.change_pct }}</td>
+                <td>{{ row.previous_close }}</td>
+                <td>{{ row.open }}</td>
+                <td>{{ row.day_range }}</td>
+                <td>{{ row.year_range }}</td>
+                <td>{{ row.position_52w }}</td>
+                <td>{{ row.volume }}</td>
+                <td>{{ row.market_cap }}</td>
+                <td>{{ row.currency }}</td>
+                <td>{{ row.exchange }}</td>
+                <td>{{ row.trend }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel news-panel">
+        <h2>Latest News (Top 20 per stock)</h2>
+        {% for row in results %}
+        <article class="news-block">
+          <h3>{{ row.symbol }}</h3>
+          {% if row.news %}
+          <ul class="news-list">
+            {% for item in row.news %}
+            <li>
+              <a href="{{ item.link }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+              <div class="news-meta">{{ item.publisher }} | {{ item.published }}</div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="hint">No recent news found.</p>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </main>
+  </body>
+</html>
