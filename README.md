@@ -21,7 +21,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-開啟瀏覽器到 <http://127.0.0.1:5000>
+open <http://127.0.0.1:5000>
 
 ## Market Data Timing Note
 
